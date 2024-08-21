@@ -1,17 +1,41 @@
-version: '3.9'
+version: '3.8'
+
 services:
-  mysql:
-    image: mysql:8.0.27
-    container_name: mysql
+  percona:
+    image: percona:latest
+    container_name: percona_db
     platform: linux/amd64
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db
-      MYSQL_USER: linnyk
-      MYSQL_PASSWORD: linnyk
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
     ports:
       - "3306:3306"
     volumes:
-      - ./mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - percona_data:/var/lib/mysql
+    networks:
+      - my_network
 
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    platform: linux/amd64
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - my_network
+
+volumes:
+  percona_data:
+  postgres_data:
+
+networks:
+  my_network:
+    driver: bridge
